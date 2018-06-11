@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class ButtonCreator : MonoBehaviour {
 
-    public GameObject menu;
-    public Button prefab;
-    public CityBuilder cityBuilder;
+    public GameObject menu;                             //The menu to create the Button on
+    public Button prefab;                               //The Button prefab to instantiate
+    public CityBuilder cityBuilder;                     //Script to build the city on the table
 
 
     /* * * CreateButtons-Function

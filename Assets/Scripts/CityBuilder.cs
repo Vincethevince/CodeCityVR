@@ -39,6 +39,11 @@ public class CityBuilder : MonoBehaviour {
 
     private void CreateGameObjectFromProjectData(ProjectData projectData) {
         //projectData.setParents(projectData);
+
+        /* * * 
+         * Based on the type of the object, the object should instantiate itself with its prefab. -- atm they should print their type and their id
+         */
+
         switch (projectData.type)
         {
             case "block": /*GameObject planes = Instantiate(plane);
@@ -49,9 +54,17 @@ public class CityBuilder : MonoBehaviour {
             default: break;
         }
 
+        /* * *
+         * If an object has one or more children, then the children should execute this method on their own.
+         */
+
         if (projectData.children != null)
         {
-            Debug.Log(projectData.children[0].id);
+            foreach (ProjectData data in projectData.children)
+            {
+                Debug.Log(data.id);
+            }
+            //Debug.Log(projectData.children[0].id);
             foreach (ProjectData data in projectData.children)
             {
                 CreateGameObjectFromProjectData(data);

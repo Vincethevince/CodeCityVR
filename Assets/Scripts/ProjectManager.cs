@@ -72,7 +72,7 @@ public class ProjectManager : MonoBehaviour {
 
 
     /* * * ProcessStart-Function
-     * Deserialize a JsonFile into a Root-Object
+     * Deserialize a JsonFile into a Root-Object -- The first Object
      */
     private Root ProcessStart(string jsonString)
     {
