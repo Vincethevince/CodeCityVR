@@ -5,7 +5,7 @@ using VRTK;
 
 public class AudioTeleport : MonoBehaviour {
 
-    public VRTK_ControllerEvents controllerEvents;
+    //public  controllerEvents;
     public AudioClip audioTeleport;
     public AudioSource audioSource;
 
@@ -16,7 +16,7 @@ public class AudioTeleport : MonoBehaviour {
 	
 	
 
-    private void OnEnable() {
+    /*private void OnEnable() {
         controllerEvents.TouchpadReleased += ControllerEvents_TouchpadReleased;
     }
 
@@ -29,5 +29,5 @@ public class AudioTeleport : MonoBehaviour {
     private void ControllerEvents_TouchpadReleased(object sender, ControllerInteractionEventArgs e)
     {
         audioSource.Play();
-    }
+    }*/
 }
