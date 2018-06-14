@@ -36,7 +36,7 @@ public class ProjectManager : MonoBehaviour {
             //Debug.Log(projectList[0].name);
         }
     }
-
+    
     /* * * GetUrlForJsonProject-Function
      * Create an actual WWW Object from the URL given on the Root Object
      * */

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 
 public class ButtonCreator : MonoBehaviour {
 
     public GameObject menu;                             //The menu to create the Button on
-    public Button prefab;                               //The Button prefab to instantiate
+    public Button buttonPrefab;                               //The Button prefab to instantiate
     public CityBuilder cityBuilder;                     //Script to build the city on the table
 
 
@@ -20,14 +21,23 @@ public class ButtonCreator : MonoBehaviour {
 
     public void createButtons(JsonProject projectToCreateButtonOf)
     {
-        Button mybutton = Instantiate(prefab);
+        Button mybutton = Instantiate(buttonPrefab);
         mybutton.transform.SetParent(menu.transform);
         mybutton.GetComponentInChildren<Text>().text = projectToCreateButtonOf.name;
         mybutton.transform.localScale = new Vector3((float)0.5, (float)0.5, (float)0.5);
         mybutton.transform.localPosition = new Vector3(-5, 16, (float)-0.01);
         mybutton.transform.localRotation = new Quaternion(0,0,0,0);
-        //mybutton.onClick = cityBuilder.buildCity(projectToCreateButoonOf)  ; Add function here to build the CodeCity
-        StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
+        mybutton.interactable = true;
+        //clickEvent += Wrapper(projectToCreateButtonOf);
+        mybutton.onClick.AddListener(delegate { StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
+                                                mybutton.interactable = false;}) ; //Add function here to build the CodeCity
+        //StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
         //Debug.Log(" Hello");
+    }
+
+
+    public void Wrapper(JsonProject projectToCreateButtonOf)
+    {
+        StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
     }
 }

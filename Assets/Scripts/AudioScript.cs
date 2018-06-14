@@ -19,18 +19,34 @@ public class AudioScript : MonoBehaviour {
 		
 	}
 
-    public void Spawn() { //Sound für Objekt Spawn
+
+    /* * *
+     * Plays sound for object spawn
+     */
+
+    public void Spawn()
+    {
         audioSource.clip = audioSpawn;
         audioSource.Play();
     }
 
-    public void Despawn() //Sound für Objekt Despawn
+
+    /* * *
+     * Plays sound for object despawn
+     */
+
+    public void Despawn() 
     {
         audioSource.clip = audioDespawn;
         audioSource.Play();
     }
 
-    public void Menu() //Sound für Menü Switch
+
+    /* * *
+     * Plays sound for menu switch
+     */
+
+    public void Menu()
     {
         audioSource.clip = audioMenu;
         audioSource.Play();
