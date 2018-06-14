@@ -50,12 +50,17 @@ public class CityBuilder : MonoBehaviour {
 
         switch (projectData.type)
         {
-            case "block": GameObject cubes = Instantiate(cube); cubes.transform.SetParent(origin.transform,true); 
-               /* cubes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/ Debug.Log("cube" + projectData.id); break;
+            case "block": GameObject cubes = Instantiate(cube);
+                cubes.transform.SetParent(origin.transform);
+                /* cubes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
+                Debug.Log("cube" + projectData.id); break;
 
-            case "scope": //GameObject planes = new GameObject() ; planes.transform.SetParent(origin.transform); planes = Instantiate(plane);
-                GameObject planes = Instantiate(plane); planes.transform.SetParent(origin.transform,true); Debug.Log(getSubtreeWidth(projectData));
-                /*planes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/ Debug.Log("plane" + projectData.id); break;
+            case "scope": //GameObject planes = new GameObject() ; 
+                GameObject planes = Instantiate(plane);
+                planes.transform.SetParent(origin.transform);
+                Debug.Log(getSubtreeWidth(projectData));
+                /*planes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
+                Debug.Log("plane" + projectData.id); break;
 
             default: break;
         }

@@ -28,16 +28,10 @@ public class ButtonCreator : MonoBehaviour {
         mybutton.transform.localPosition = new Vector3(-5, 16, (float)-0.01);
         mybutton.transform.localRotation = new Quaternion(0,0,0,0);
         mybutton.interactable = true;
-        //clickEvent += Wrapper(projectToCreateButtonOf);
         mybutton.onClick.AddListener(delegate { StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
-                                                mybutton.interactable = false;}) ; //Add function here to build the CodeCity
-        //StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
-        //Debug.Log(" Hello");
+                                                mybutton.interactable = false;}) ; 
     }
 
 
-    public void Wrapper(JsonProject projectToCreateButtonOf)
-    {
-        StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
-    }
+ 
 }
