@@ -10,6 +10,9 @@ public class CityBuilder : MonoBehaviour {
     private int cubeCounter;
     private int planeCounter;
 
+    private GameObject[] cubes;
+    private GameObject[] planes;
+
     public IEnumerator BuildCodeCity(JsonProject JsonProjectToBuild)
     {
         Debug.Log(JsonProjectToBuild.views[0].href);
@@ -21,6 +24,7 @@ public class CityBuilder : MonoBehaviour {
             Debug.Log("ERROR: " + complexityUrl.error);
         }
         else
+
         {
             Debug.Log("No Error");
             Debug.Log(complexityUrl.text);
@@ -30,7 +34,7 @@ public class CityBuilder : MonoBehaviour {
             {
                 CreateGameObjectFromProjectData(allProjects);
             }*/
-            CreateGameObjectFromProjectData(projectView.data[0]);
+            //origin = CreateGameObjectFromProjectData(projectView.data[0], null);
         }
     }
 
@@ -40,29 +44,32 @@ public class CityBuilder : MonoBehaviour {
         return parsejson;
     }
 
-    private void CreateGameObjectFromProjectData(ProjectData projectData)
+    private CityObject CreateGameObjectFromProjectData(ProjectData projectData, CityObject cityObjectParent)
     {
         //projectData.setParents(projectData);
 
         /* * * 
          * Based on the type of the object, the object should instantiate itself with its prefab. -- atm they should print their type and their id
          */
-
+        CityObject rootCityObject;
         switch (projectData.type)
         {
-            case "block": GameObject cubes = Instantiate(cube);
-                cubes.transform.SetParent(origin.transform);
+            case "block": rootCityObject = new CityObject(cube, cityObjectParent);
+                cubes[cubeCounter].transform.SetParent(origin.transform);
+                cubeCounter++;
                 /* cubes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
                 Debug.Log("cube" + projectData.id); break;
 
-            case "scope": //GameObject planes = new GameObject() ; 
-                GameObject planes = Instantiate(plane);
-                planes.transform.SetParent(origin.transform);
+            case "scope":   rootCityObject = new CityObject(plane, cityObjectParent);
+                /*planes[planeCounter] = new GameObject() ; 
+                planes[planeCounter] = Instantiate(plane);
+                planes[planeCounter].transform.SetParent(origin.transform);*/
+                planeCounter++;
                 Debug.Log(getSubtreeWidth(projectData));
                 /*planes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
                 Debug.Log("plane" + projectData.id); break;
 
-            default: break;
+            default: rootCityObject = null; break;
         }
         
         /* * *
@@ -77,9 +84,10 @@ public class CityBuilder : MonoBehaviour {
             }
             foreach (ProjectData data in projectData.children)
             {
-                CreateGameObjectFromProjectData(data);
+                //rootCityObject.appendChildren(CreateGameObjectFromProjectData(data));
             }
         }
+        return rootCityObject;
     }
 
     private void calculatePosition(GameObject gameObject)
@@ -101,6 +109,20 @@ public class CityBuilder : MonoBehaviour {
             }
         }
         return totalWidth;
+    }
+
+    public void destroyBuiltCity()
+    {
+        Debug.Log("Destroy City");
+        foreach(GameObject cube in cubes)
+        {
+            Destroy(cube);
+        }
+        foreach(GameObject plane in planes)
+        {
+            Destroy(plane);
+        }
+        
     }
 
 
