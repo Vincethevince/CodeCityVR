@@ -6,12 +6,8 @@ public class CityBuilder : MonoBehaviour {
 
     public GameObject plane;
     public GameObject cube;
-    public GameObject origin;
-    private int cubeCounter;
-    private int planeCounter;
+    public CityObject origin;
 
-    private GameObject[] cubes;
-    private GameObject[] planes;
 
     public IEnumerator BuildCodeCity(JsonProject JsonProjectToBuild)
     {
@@ -34,7 +30,7 @@ public class CityBuilder : MonoBehaviour {
             {
                 CreateGameObjectFromProjectData(allProjects);
             }*/
-            //origin = CreateGameObjectFromProjectData(projectView.data[0], null);
+            origin = CreateGameObjectFromProjectData(projectView.data[0], origin);
         }
     }
 
@@ -55,16 +51,10 @@ public class CityBuilder : MonoBehaviour {
         switch (projectData.type)
         {
             case "block": rootCityObject = new CityObject(cube, cityObjectParent);
-                cubes[cubeCounter].transform.SetParent(origin.transform);
-                cubeCounter++;
                 /* cubes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
                 Debug.Log("cube" + projectData.id); break;
 
             case "scope":   rootCityObject = new CityObject(plane, cityObjectParent);
-                /*planes[planeCounter] = new GameObject() ; 
-                planes[planeCounter] = Instantiate(plane);
-                planes[planeCounter].transform.SetParent(origin.transform);*/
-                planeCounter++;
                 Debug.Log(getSubtreeWidth(projectData));
                 /*planes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
                 Debug.Log("plane" + projectData.id); break;
@@ -84,7 +74,8 @@ public class CityBuilder : MonoBehaviour {
             }
             foreach (ProjectData data in projectData.children)
             {
-                //rootCityObject.appendChildren(CreateGameObjectFromProjectData(data));
+                CityObject newChild = CreateGameObjectFromProjectData(data, rootCityObject);
+                rootCityObject.appendChildren(newChild);
             }
         }
         return rootCityObject;
@@ -111,18 +102,19 @@ public class CityBuilder : MonoBehaviour {
         return totalWidth;
     }
 
-    public void destroyBuiltCity()
+    /* * *
+     * This Method walks trough the whole tree and deletes the objects from the bottom to the top
+     */
+
+    public void destroyBuiltCity(CityObject parent)
     {
-        Debug.Log("Destroy City");
-        foreach(GameObject cube in cubes)
+       foreach(CityObject child in parent.children)
         {
-            Destroy(cube);
+            destroyBuiltCity(child);
+            
         }
-        foreach(GameObject plane in planes)
-        {
-            Destroy(plane);
-        }
-        
+            parent.destroyCityObject();
+
     }
 
 

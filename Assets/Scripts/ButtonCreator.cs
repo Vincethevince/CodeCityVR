@@ -41,7 +41,7 @@ public class ButtonCreator : MonoBehaviour {
         destroyButton.transform.localPosition = new Vector3(-5, 16, (float)-0.01);
         destroyButton.transform.localRotation = new Quaternion(0, 0, 0, 0);
         destroyButton.onClick.AddListener(delegate {
-            cityBuilder.destroyBuiltCity();
+            cityBuilder.destroyBuiltCity(cityBuilder.origin);
             mybutton.interactable = true;
             destroyButton.interactable = false;
         });

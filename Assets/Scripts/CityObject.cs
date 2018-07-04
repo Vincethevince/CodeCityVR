@@ -7,22 +7,25 @@ public class CityObject : MonoBehaviour {
     private GameObject prefab;
 
     private CityObject parentCityObject;
-    private ArrayList children;
+    public ArrayList children;
 
 
     public CityObject(GameObject gameObject, CityObject cityObjectParent)
     {
         prefab = Instantiate(gameObject);
+        prefab.transform.SetParent(cityObjectParent.transform);
         parentCityObject = cityObjectParent;
+        children = new ArrayList();
     }
 
     public void appendChildren(CityObject cityObject)
     {
-        this.children.Add(cityObject);
+        children.Add(cityObject);
     }
 
-    ~CityObject()
+    public void destroyCityObject()
     {
-
+        DestroyImmediate(prefab);
+        DestroyImmediate(this);
     }
 }
