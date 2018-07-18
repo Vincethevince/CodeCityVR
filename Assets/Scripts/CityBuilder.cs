@@ -7,6 +7,9 @@ public class CityBuilder : MonoBehaviour {
     public GameObject plane;
     public GameObject cube;
     public CityObject origin;
+    private bool newPlane = true;
+
+    private int maxW = 0;
 
 
     public IEnumerator BuildCodeCity(JsonProject JsonProjectToBuild)
@@ -31,6 +34,7 @@ public class CityBuilder : MonoBehaviour {
                 CreateGameObjectFromProjectData(allProjects);
             }*/
             origin = CreateGameObjectFromProjectData(projectView.data[0], origin);
+                      
         }
     }
 
@@ -40,6 +44,16 @@ public class CityBuilder : MonoBehaviour {
         return parsejson;
     }
 
+    private GameObject FindPrefab(string type)
+    {
+        switch (type.ToLower())
+        {
+            case "block": newPlane = false; return cube;
+            case "scope": newPlane = true; return plane;
+            default: return null;
+        }
+    }
+    
     private CityObject CreateGameObjectFromProjectData(ProjectData projectData, CityObject cityObjectParent)
     {
         //projectData.setParents(projectData);
@@ -47,20 +61,22 @@ public class CityBuilder : MonoBehaviour {
         /* * * 
          * Based on the type of the object, the object should instantiate itself with its prefab. -- atm they should print their type and their id
          */
-        CityObject rootCityObject;
-        switch (projectData.type)
+
+        Debug.Log(projectData.type + projectData.id);
+        var prefab = FindPrefab(projectData.type);
+        if (!prefab)
+            return null;
+
+
+        CityObject rootCityObject = new CityObject(prefab, cityObjectParent, getSubtreeWidth(projectData));
+
+        Debug.Log(rootCityObject.width);
+        if(newPlane)
         {
-            case "block": rootCityObject = new CityObject(cube, cityObjectParent);
-                /* cubes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
-                Debug.Log("cube" + projectData.id); break;
-
-            case "scope":   rootCityObject = new CityObject(plane, cityObjectParent);
-                Debug.Log(getSubtreeWidth(projectData));
-                /*planes.transform.localScale = new Vector3((float)0.8, (float)0.8, (float)0.8);*/
-                Debug.Log("plane" + projectData.id); break;
-
-            default: rootCityObject = null; break;
+            maxW = rootCityObject.width;
         }
+        //rootCityObject.scalethis();
+        scaleObject(rootCityObject);
         
         /* * *
          * If an object has one or more children, then the children should execute this method on their own.
@@ -75,28 +91,51 @@ public class CityBuilder : MonoBehaviour {
             foreach (ProjectData data in projectData.children)
             {
                 CityObject newChild = CreateGameObjectFromProjectData(data, rootCityObject);
-                rootCityObject.appendChildren(newChild);
+                rootCityObject.appendChild(newChild);
             }
         }
         return rootCityObject;
     }
 
-    private void calculatePosition(GameObject gameObject)
+    private void calculatePosition(CityObject root)
     {
+        int maxWidth = root.width;
 
+        foreach(CityObject child in root.children)
+        {
+            Debug.Log("Root: "+ root.width);
+            float scaleRatio = (child.width / maxWidth);
+            Debug.Log("Scale Ratio: " + scaleRatio);
+            child.gameObject.transform.localScale.Set(scaleRatio, scaleRatio, scaleRatio);
+            if (child.children != null)
+            {
+                calculatePosition(child);
+            }
+        }
     }
 
-    private double getSubtreeWidth(ProjectData projectData)
+    private void scaleObject(CityObject node)
     {
-        double totalWidth = 0;
+        //float scaleRatio = (float)(node.width/maxW);
+        Debug.Log(node.form.name);
+        //node.gameObject.transform.localScale.Set(scaleRatio, scaleRatio, scaleRatio);
+    }
 
-        foreach(ProjectData subData in projectData.children)
+    private int getSubtreeWidth(ProjectData projectData)
+    {
+        int totalWidth = 0;
+
+        totalWidth += projectData.width;
+        if (projectData.children != null)
         {
-            totalWidth += subData.width;
-
-            if (subData.children != null)
+            foreach (ProjectData subData in projectData.children)
             {
-                totalWidth += getSubtreeWidth(subData);
+                totalWidth += subData.width;
+
+                if (subData.children != null)
+                {
+                    totalWidth += getSubtreeWidth(subData);
+                }
             }
         }
         return totalWidth;
@@ -106,14 +145,14 @@ public class CityBuilder : MonoBehaviour {
      * This Method walks trough the whole tree and deletes the objects from the bottom to the top
      */
 
-    public void destroyBuiltCity(CityObject parent)
+    public void destroyBuiltCity(CityObject node)
     {
-       foreach(CityObject child in parent.children)
+       foreach(CityObject child in node.children)
         {
             destroyBuiltCity(child);
             
         }
-            parent.destroyCityObject();
+            node.destroyCityObject();
 
     }
 
