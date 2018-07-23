@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 
 public class ButtonCreator : MonoBehaviour {
 
     public GameObject menu;                             //The menu to create the Button on
-    public Button prefab;                               //The Button prefab to instantiate
+    public GameObject menu2;
+    public Button buttonPrefab;                               //The Button prefab to instantiate
     public CityBuilder cityBuilder;                     //Script to build the city on the table
 
 
@@ -20,14 +22,31 @@ public class ButtonCreator : MonoBehaviour {
 
     public void createButtons(JsonProject projectToCreateButtonOf)
     {
-        Button mybutton = Instantiate(prefab);
+        Button mybutton = Instantiate(buttonPrefab);
+        Button destroyButton = Instantiate(buttonPrefab);
         mybutton.transform.SetParent(menu.transform);
         mybutton.GetComponentInChildren<Text>().text = projectToCreateButtonOf.name;
         mybutton.transform.localScale = new Vector3((float)0.5, (float)0.5, (float)0.5);
         mybutton.transform.localPosition = new Vector3(-5, 16, (float)-0.01);
         mybutton.transform.localRotation = new Quaternion(0,0,0,0);
-        //mybutton.onClick = cityBuilder.buildCity(projectToCreateButoonOf)  ; Add function here to build the CodeCity
-        StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
-        //Debug.Log(" Hello");
+        mybutton.interactable = true;
+        mybutton.onClick.AddListener(delegate {
+            StartCoroutine(cityBuilder.BuildCodeCity(projectToCreateButtonOf));
+            mybutton.interactable = false;
+            destroyButton.interactable = true;
+        }) ;
+        destroyButton.transform.SetParent(menu2.transform);
+        destroyButton.GetComponentInChildren<Text>().text = "Destroy City";
+        destroyButton.transform.localScale = new Vector3((float)0.5, (float)0.5, (float)0.5);
+        destroyButton.transform.localPosition = new Vector3(-5, 16, (float)-0.01);
+        destroyButton.transform.localRotation = new Quaternion(0, 0, 0, 0);
+        destroyButton.onClick.AddListener(delegate {
+            cityBuilder.destroyBuiltCity(cityBuilder.origin);
+            mybutton.interactable = true;
+            destroyButton.interactable = false;
+        });
     }
+
+
+ 
 }
