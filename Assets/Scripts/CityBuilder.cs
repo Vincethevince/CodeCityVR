@@ -99,19 +99,7 @@ public class CityBuilder : MonoBehaviour {
 
     private void calculatePosition(CityObject root)
     {
-        int maxWidth = root.width;
-
-        foreach(CityObject child in root.children)
-        {
-            Debug.Log("Root: "+ root.width);
-            float scaleRatio = (child.width / maxWidth);
-            Debug.Log("Scale Ratio: " + scaleRatio);
-            child.gameObject.transform.localScale.Set(scaleRatio, scaleRatio, scaleRatio);
-            if (child.children != null)
-            {
-                calculatePosition(child);
-            }
-        }
+        
     }
 
     private void scaleObject(CityObject node)
