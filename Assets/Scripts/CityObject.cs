@@ -6,18 +6,22 @@ public class CityObject : MonoBehaviour {
 
     public GameObject form;
 
-    private CityObject parent;
+    public CityObject parent;
     public ArrayList children;
 
     public int width;
+    public int height;
+    public int value;
 
 
-    public CityObject(GameObject prefab, CityObject cityObjectParent, int newWidth)
+    public CityObject(GameObject prefab, CityObject cityObjectParent, int newWidth, int newHeight, int newValue)
     {
         form = Instantiate(prefab);
         parent = cityObjectParent;
         children = new ArrayList();
         width = newWidth;
+        height = newHeight;
+        value = newValue;
     }
 
     public void appendChild(CityObject cityObject)
@@ -28,7 +32,7 @@ public class CityObject : MonoBehaviour {
 
     public void destroyCityObject()
     {
-        DestroyImmediate(gameObject);
+        DestroyImmediate(form);
         DestroyImmediate(this);
     }
 
