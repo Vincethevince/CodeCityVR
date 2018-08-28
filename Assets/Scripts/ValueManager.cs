@@ -15,7 +15,7 @@ public class ValueManager : MonoBehaviour {
     public Material value9;
     public Material valueDefault;
 
-    public void setValue(CityObject node)
+    public void SetValue(CityObject node)
     {
         Material valMaterial; 
         switch (node.value)

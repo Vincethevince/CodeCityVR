@@ -7,30 +7,30 @@ public class CityObject : MonoBehaviour {
     public GameObject form;
 
     public CityObject parent;
-    public ArrayList children;
+    public List<CityObject> children;
 
-    public int width;
+    public double width;
     public int height;
     public int value;
 
 
-    public CityObject(GameObject prefab, CityObject cityObjectParent, int newWidth, int newHeight, int newValue)
+    public CityObject(GameObject prefab, CityObject cityObjectParent, double newWidth, int newHeight, int newValue)
     {
         form = Instantiate(prefab);
         parent = cityObjectParent;
-        children = new ArrayList();
+        children = new List<CityObject>();
         width = newWidth;
         height = newHeight;
         value = newValue;
     }
 
-    public void appendChild(CityObject cityObject)
+    public void AppendChild(CityObject cityObject)
     {
         children.Add(cityObject);
         cityObject.form.transform.SetParent(this.form.transform);
     }
 
-    public void destroyCityObject()
+    public void DestroyCityObject()
     {
         DestroyImmediate(form);
         DestroyImmediate(this);

@@ -50,7 +50,7 @@ public class ProjectData
 {
     public int id;
     public string type;
-    public int width;
+    public double width;
     public int height;
     public int value;
     public ProjectData[] children;
@@ -64,3 +64,17 @@ public class ProjectData
     }
 }
 
+public class LayoutVar
+{
+    public int x;
+    public int z;
+    public int level;
+    public int size;
+    
+    public LayoutVar()
+    {
+        x = 0;
+        z = 0;
+        level = 0;
+    }
+}
