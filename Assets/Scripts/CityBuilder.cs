@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -23,38 +23,27 @@ public class CityBuilder : MonoBehaviour {
             Debug.Log("ERROR: " + complexityUrl.error);
         }
         else
-
         {
-            Debug.Log("No Error");
-            Debug.Log(complexityUrl.text);
-
             ProjectView projectView = ProcessProjectData(complexityUrl.text);
-            /*foreach (ProjectData allProjects in projectView.data)
-            {
-                CreateGameObjectFromProjectData(allProjects);
-            }*/
             origin = CreateGameObjectFromProjectData(projectView.data[0], origin);
             Algorithm();
         }
     }
 
     /* * *
-     * This function is doing all the steps after creating all the GameObjects. First all widths are adjusted for the scope objects. Then all Objects are 
-     * scaled and positioned. In the end, all Objects get a new Material.
+     * This function is doing all the steps after creating all the GameObjects. First all widths are adjusted for the scope objects.  
+     * Then all Objects are scaled and positioned. In the end, all Objects get a new Material.
      */
 
     private void Algorithm()
     {
-        origin.width = Subtree(origin);
-        //log(origin);        
+        origin.width = Subtree(origin);        
         ScaleObject(origin);
         SortChildren(origin);
-        logWidths(origin);
-        //PositionObjectsLine(origin);
         PositionObjectsRadial(origin);
         SetMaterials(origin);
-        //ScaleObjectAfter(origin);
     }
+    
     private ProjectView ProcessProjectData(string jsonString)
     {
         ProjectView parsejson = JsonUtility.FromJson<ProjectView>(jsonString);
@@ -75,19 +64,12 @@ public class CityBuilder : MonoBehaviour {
         }
     }
     
-    private CityObject CreateGameObjectFromProjectData(ProjectData projectData, CityObject cityObjectParent)
+    private CityObject CreateCityObjectFromProjectData(ProjectData projectData, CityObject cityObjectParent)
     {
-        //projectData.setParents(projectData);
-
-        /* * * 
-         * Based on the type of the object, the object should instantiate itself with its prefab. -- atm they should print their type and their id
-         */
-
-        //Debug.Log(projectData.type + projectData.id);
+        
         var prefab = FindPrefab(projectData.type);
         if (!prefab)
             return null;
-
 
         CityObject rootCityObject = new CityObject(prefab, cityObjectParent, projectData.width, projectData.height, projectData.value);
 
@@ -97,12 +79,8 @@ public class CityBuilder : MonoBehaviour {
          * If an object has one or more children, then the children should execute this method on their own.
          */
 
-        if (projectData.children != null)
+        if (projectData.children.Count() != 0)
         {
-            foreach (ProjectData data in projectData.children)
-            {
-                //Debug.Log(data.id);
-            }
             foreach (ProjectData data in projectData.children)
             {
                 CityObject newChild = CreateGameObjectFromProjectData(data, rootCityObject);
@@ -111,44 +89,7 @@ public class CityBuilder : MonoBehaviour {
         }
         return rootCityObject;
     }
-
-   
-    private void logWidths (CityObject cityObject)
-    {
-        if (cityObject.children == null)
-        {
-            Debug.Log(cityObject.width);
-        }
-        else
-        {
-            foreach (CityObject child in cityObject.children)
-            {
-                logWidths(child);  
-            }
-            Debug.Log(cityObject.width);
-        }
-    }
-
-    /*private int oldgetSubtreeWidth(ProjectData projectData)
-    {
-        int totalWidth = 0;
-
-        totalWidth += projectData.width;
-        if (projectData.children != null)
-        {
-            foreach (ProjectData subData in projectData.children)
-            {
-                totalWidth += subData.width;
-
-                if (subData.children != null)
-                {
-                    totalWidth += oldgetSubtreeWidth(subData);
-                }
-            }
-        }
-        return totalWidth;
-    }*/
-
+    
     /* * *
      * This Method adjusts the widths of the planes because they didn´t get a width of the ProjectData before.
      * So the Planes add up all widths of their children (cubes) for theirown.
@@ -165,52 +106,6 @@ public class CityBuilder : MonoBehaviour {
 
     }
 
-
-    /*private void scaleObject(CityObject node)
-    {
-        int maxWidth = node.width;
-        if (node.form.transform.localScale.x == 2) {
-            Debug.Log(node.form.name);
-            //node.gameObject.transform.localScale.Set(scaleRatio, scaleRatio, scaleRatio);
-            foreach (CityObject child in node.children)
-            {
-                //Debug.Log(maxWidth);
-                //Debug.Log(child.width);
-                double Ratio = (double) child.width / maxWidth;
-                float scaleRatio = (float)Ratio;
-                Debug.Log(scaleRatio);
-                float height = 1f;
-                if (!IsScope(child))
-                {
-                   height = (float)(2 / node.form.transform.localScale.y) * scaleRatio;
-                }
-                child.form.transform.localScale = new Vector3(scaleRatio, height, scaleRatio);
-                if (child.children != null)
-                {
-                    scaleObject(child);
-                }
-            }
-        }
-        else
-        {
-            foreach (CityObject child in node.children)
-            {
-                double Ratio = (double)((child.width / maxWidth) * node.form.transform.localScale.x);
-                float scaleRatio = (float)Ratio;
-                float height = 1f;
-                if (!IsScope(child))
-                {
-                    height = (float)(2 / node.form.transform.localScale.y) * scaleRatio;
-                }
-                child.form.transform.localScale = new Vector3(scaleRatio, height, scaleRatio);
-                if (child.children != null)
-                {
-                    scaleObject(child);
-                }
-            }
-        }
-    }*/
-
     private void ScaleObject(CityObject node)
     {
         double maxWidth = node.width;
@@ -226,7 +121,7 @@ public class CityBuilder : MonoBehaviour {
 
             float height = ScaleHeights(child);
             child.form.transform.localScale = new Vector3(scaleRatio, height, scaleRatio);
-            if (child.children != null)
+            if (child.children.Count() != null)
             {
                 ScaleObject(child);
             }
@@ -281,8 +176,8 @@ public class CityBuilder : MonoBehaviour {
     }
 
     /* * *
-     * Due to the way unity is calculating with its scaling of the parents etc. - this function is needed to position all objects beyond the second level
-     * in the tree of all Objects.
+     * Due to the way unity is calculating with its scaling of the parents etc. - this function is needed to position all objects 
+     * beyond the second levelin the tree of all Objects.
      */
 
     private void PositionChildrenLine(CityObject node)
@@ -293,8 +188,9 @@ public class CityBuilder : MonoBehaviour {
         {
             float xPos = 1 - (child.form.transform.localScale.x * node.form.transform.localScale.x); //passt
 
-            float yPos = 1.035f + (0.5f * child.height / 100) + node.form.transform.lossyScale.y ; // 1.03 is the yPos of the first Plane + 0.005 for the plane
-            //0.025 is the top of the table + 0.005 for the first plane
+            float yPos = 1.035f + (0.5f * child.height / 100) + node.form.transform.lossyScale.y ; 
+            //1.035 => 1.03 is the yPos of the first Plane + 0.005 for the plane
+            //1.03 => 1.025 is the top of the table + 0.005 for the first plane
 
             float zPos = (node.form.transform.position.z + node.form.transform.localScale.z) -
                 ((child.form.transform.localScale.z + usedSpace) * node.form.transform.localScale.z);
@@ -331,13 +227,15 @@ public class CityBuilder : MonoBehaviour {
             else if (variables.x == 0 && variables.z != 0)
             {
                 xPos = 1 - child.form.transform.localScale.x - (float)distance;
-                zPos = layout[variables.z - 1, variables.x].transform.position.z - layout[variables.z - 1, variables.x].transform.localScale.z
+                zPos = layout[variables.z - 1, variables.x].transform.position.z 
+                     - layout[variables.z - 1, variables.x].transform.localScale.z
                      - child.form.transform.localScale.z
                      - (float)distance * 2f;
             }
             else if (variables.x != 0 && variables.z == 0)
             {
-                xPos = layout[variables.z, variables.x - 1].transform.position.x - layout[variables.z, variables.x - 1].transform.localScale.x
+                xPos = layout[variables.z, variables.x - 1].transform.position.x 
+                     - layout[variables.z, variables.x - 1].transform.localScale.x
                      - child.form.transform.localScale.x
                      - (float)distance * 2f;
                 zPos = 1 - child.form.transform.localScale.z - (float)distance;
@@ -346,19 +244,10 @@ public class CityBuilder : MonoBehaviour {
             {
                 xPos = layout[variables.z - 1, variables.x].transform.position.x - (float)distance * 2f; 
 
-                zPos = layout[variables.z, variables.x - 1].transform.position.z - (float)distance * 2f; //- layout[variables.z, variables.x - 1].transform.localScale.z
-                //- child.form.transform.localScale.z;
-                //zPos = 1 - child.form.transform.localScale.z;
+                zPos = layout[variables.z, variables.x - 1].transform.position.z - (float)distance * 2f;
             }
 
             float yPos = 1.025f + (0.5f * child.height / 100) + (node.form.transform.localScale.y);
-
-            
-            /*else
-            {
-                zPos = layout[variables.x - 1, variables.z].transform.position.z - layout[variables.x -1, variables.z].transform.localScale.z
-               - child.form.transform.localScale.z;
-            }*/
 
             child.form.transform.position = new Vector3(xPos, yPos, zPos);
 
@@ -376,7 +265,6 @@ public class CityBuilder : MonoBehaviour {
     private void PositionChildrenRadial(CityObject node)
     {
         LayoutVar variables = new LayoutVar();
-        Debug.Log("Size: " + GetArraySize(node));
         variables.size = GetArraySize(node);
         GameObject[,] layout = new GameObject[variables.size, variables.size];
 
@@ -427,7 +315,8 @@ public class CityBuilder : MonoBehaviour {
                 zPos = layout[variables.z, variables.x - 1].transform.position.z - (float)distance * 2f;
             }
 
-            float yPos = plane.transform.position.y + (plane.transform.localScale.y/2) + (0.5f * child.height / 100) + node.form.transform.lossyScale.y; 
+            float yPos = plane.transform.position.y + (plane.transform.localScale.y/2) + (0.5f * child.height / 100) 
+                 + node.form.transform.lossyScale.y; 
 
             child.form.transform.position = new Vector3(xPos, yPos, zPos);
 
@@ -525,8 +414,8 @@ public class CityBuilder : MonoBehaviour {
     }
 
     /* * *
-     * This Method checks if a CityObject has children. If it has children, the function knows that the Object is a Scope and returns true. 
-     * Else it just returns false because only Leafs of the tree haven´t got children.
+     * This Method checks if a CityObject has children. If it has children, the function knows that the Object is 
+     * a Scope and returns true. Else it just returns false because only Leafs of the tree haven´t got children.
      */
 
     private bool IsScope(CityObject cityObject)
@@ -537,8 +426,8 @@ public class CityBuilder : MonoBehaviour {
 
 
     /* * *
-     * For positioning the Objects radial, a Scope needs to be split into a n*n Matrix. This Function finds the next biggest square number n^2 and returns n for 
-     * knowledge about the needed matrix size.
+     * For positioning the Objects radial, a Scope needs to be split into a n*n Matrix. This Function finds the next 
+     * biggest square number n^2 and returns n for knowledge about the needed matrix size.
      */
 
     private int GetArraySize(CityObject node)
@@ -550,8 +439,4 @@ public class CityBuilder : MonoBehaviour {
         }
         return size;
     }
-
-
-
 }
-
